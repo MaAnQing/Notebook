@@ -13,17 +13,17 @@ Android 4.2 之前，Google 一直应用的是 Linux 官方蓝牙协议栈，即
 蓝牙系统服务通过 JNI 来与蓝牙协议栈交互，通过 Binder IPC 来与应用层交互。系统服务给开发者提供各种蓝牙Profile的访问。Android 中的蓝牙总体架构如下图所示： 
 ![title](https://github.com/MaAnQing/Notebook/blob/master/res/images/ape_fwk_bluetooth.png)
 
-* 应用框架层 Application framework 在应用框架层是具体的蓝牙相关应用的代码，这里使用 [andorid.bluetooth](http://developer.android.com/reference/android/bluetooth/package-summary.html) 相关的 API 来和蓝牙硬件交互。其内部的实现，是通过 Binder IPC 机制来调用 Bluetooth 进程的；
+* __应用框架层 Application framework__ 在应用框架层是具体的蓝牙相关应用的代码，这里使用 [andorid.bluetooth](http://developer.android.com/reference/android/bluetooth/package-summary.html) 相关的 API 来和蓝牙硬件交互。其内部的实现，是通过 Binder IPC 机制来调用 Bluetooth 进程的；
 
-* 蓝牙系统服务 Bluetooth system service 蓝牙系统服务位于 `packages/apps/Bluetooth`，被作为一个 Android 的系统 App。它在 Android 框架层实现了蓝牙的 Service 和 Profile，并通过 JNI 调用到 HAL 层。编译的到系统中就是 /system/app/Bluetooth.apk；
+* __蓝牙系统服务 Bluetooth system service__ 蓝牙系统服务位于 `packages/apps/Bluetooth`，被作为一个 Android 的系统 App。它在 Android 框架层实现了蓝牙的 Service 和 Profile，并通过 JNI 调用到 HAL 层。编译的到系统中就是 /system/app/Bluetooth.apk；
 
-* JNI 与 [andorid.bluetooth](http://developer.android.com/reference/android/bluetooth/package-summary.html) 对应的 JNI 代码位于 `packages/apps/Bluetooth/jni`， JNI 层代码调用到 HAL 层，并当发生某些蓝牙动作（例如发现了设备）的时候，接受来自 HAL 层的回调。
+* __JNI__ 与 [andorid.bluetooth](http://developer.android.com/reference/android/bluetooth/package-summary.html) 对应的 JNI 代码位于 `packages/apps/Bluetooth/jni`， JNI 层代码调用到 HAL 层，并当发生某些蓝牙动作（例如发现了设备）的时候，接受来自 HAL 层的回调。
 
-* 硬件抽闲层 HAL 硬件抽闲层（Hardware Abstraction Layer）定义了 [andorid.bluetooth](http://developer.android.com/reference/android/bluetooth/package-summary.html) API 和蓝牙进程需要用到的标准接口，你必须实现这些接口来确保你的蓝牙硬件正常工作。蓝牙 HAL 相关的头文件位于 `hardware/libhardware/include/hardware/bluetooth.h` 和 `hardware/libhardware/include/hardware/bt_*.h`；
+* __硬件抽闲层 HAL__ 硬件抽闲层（Hardware Abstraction Layer）定义了 [andorid.bluetooth](http://developer.android.com/reference/android/bluetooth/package-summary.html) API 和蓝牙进程需要用到的标准接口，你必须实现这些接口来确保你的蓝牙硬件正常工作。蓝牙 HAL 相关的头文件位于 `hardware/libhardware/include/hardware/bluetooth.h` 和 `hardware/libhardware/include/hardware/bt_*.h`；
 
-* 蓝牙协议栈 Bluetooth Stack Android 提供的默认蓝牙协议栈位于 `system/bt`。这个协议栈实现了通用的蓝牙 HAL 接口，并且可以通过扩展（Extentions）和配置（Configuration）来自定义。
+* __蓝牙协议栈 Bluetooth Stack__ Android 提供的默认蓝牙协议栈位于 `system/bt`。这个协议栈实现了通用的蓝牙 HAL 接口，并且可以通过扩展（Extentions）和配置（Configuration）来自定义。
 
-* 供应商扩展 Vendor extentions 供应商也可以通过创建 libbt-vendor 并指定这些模块，来添加自己定义扩展和 HCI 层跟踪。
+* __供应商扩展 Vendor extentions__ 供应商也可以通过创建 libbt-vendor 并指定这些模块，来添加自己定义扩展和 HCI 层跟踪。
 
 各层之间的交互实例可以参考这篇转载文章，很抱歉原文链接也没有找到。
 
@@ -55,7 +55,7 @@ Android 4.2 之前，Google 一直应用的是 Linux 官方蓝牙协议栈，即
 ##自定义蓝牙协议栈
 如果使用了默认的 BlueDroid 协议栈，但是想加入一些自定义功能，可以这样做：
 
-* 自定义蓝牙 Profile -- 如果你想要添加一个在 Android 的　HAL 中未定义的蓝牙 Profile，你必须提供一个额外的 SDK 供开发者下载，并且确保　API 在蓝牙系统进程的应用中可用（`packages/apps/Bluetooth`），并添加 Profile　的实现到　BlueDroid　中（`external/bluetooth/bluedroid`）；
+* __自定义蓝牙 Profile__ -- 如果你想要添加一个在 Android 的　HAL 中未定义的蓝牙 Profile，你必须提供一个额外的 SDK 供开发者下载，并且确保　API 在蓝牙系统进程的应用中可用（`packages/apps/Bluetooth`），并添加 Profile　的实现到　BlueDroid　中（`external/bluetooth/bluedroid`）；
 
-* 自定义供应商扩展和配置修改　--　你可以通过创建　`libbt-vendor` 模块来添加例如额外的　AT　命令或者设备特定的配置。可以参考 `vendor/broadcom/libbt-vendor` 目录的例子；
-* Host Controller Interface (HCI)　-- 你可以通过添加　`libbt-hci`　模块来提供你自己的　HCI　接口（主要用来做调试跟踪）。参考 `external/bluetooth/hci` 目录的例子。
+* **自定义供应商扩展和配置修改**　--　你可以通过创建　`libbt-vendor` 模块来添加例如额外的　AT　命令或者设备特定的配置。可以参考 `vendor/broadcom/libbt-vendor` 目录的例子；
+* **Host Controller Interface (HCI)**　-- 你可以通过添加　`libbt-hci`　模块来提供你自己的　HCI　接口（主要用来做调试跟踪）。参考 `external/bluetooth/hci` 目录的例子。
