@@ -11,7 +11,7 @@ Android 4.2 之前，Google 一直应用的是 Linux 官方蓝牙协议栈，即
 
 ##架构
 蓝牙系统服务通过 JNI 来与蓝牙协议栈交互，通过 Binder IPC 来与应用层交互。系统服务给开发者提供各种蓝牙Profile的访问。Android 中的蓝牙总体架构如下图所示： 
-![title](http://github.com/MaAnQing/Notebook/res/images/ape_fwk_bluetooth.png)
+![title](https://github.com/MaAnQing/Notebook/blob/master/res/images/ape_fwk_bluetooth.png)
 
 * 应用框架层 Application framework 在应用框架层是具体的蓝牙相关应用的代码，这里使用 [andorid.bluetooth](http://developer.android.com/reference/android/bluetooth/package-summary.html) 相关的 API 来和蓝牙硬件交互。其内部的实现，是通过 Binder IPC 机制来调用 Bluetooth 进程的；
 
